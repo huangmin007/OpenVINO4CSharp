@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>CA2101,CA1401</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,17 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blob.cs" />
-    <Compile Include="CNNNetwork.cs" />
-    <Compile Include="ExecutableNetwork.cs" />
-    <Compile Include="IE_C_API.cs" />
-    <Compile Include="Core.cs" />
-    <Compile Include="InferRequest.cs" />
-    <Compile Include="IntPtrObject.cs" />
+    <Compile Include="InferenceEngine\Blob.cs" />
+    <Compile Include="InferenceEngine\CNNNetwork.cs" />
+    <Compile Include="InferenceEngine\ExecutableNetwork.cs" />
+    <Compile Include="InferenceEngine\IE_C_API.cs" />
+    <Compile Include="InferenceEngine\Core.cs" />
+    <Compile Include="InferenceEngine\InferRequest.cs" />
+    <Compile Include="InferenceEngine\IntPtrObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="InferenceEngine\Structures.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ie_c_api.h" />
+    <Content Include="InferenceEngine\ie_c_api.h" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -18,7 +18,11 @@ namespace InferenceEngine
     /// </summary>
     public class IntPtrObject : IDisposable
     {
-        protected bool disposedValue;
+        private bool disposedValue;
+
+        /// <summary>
+        /// 源指针释放代理函数
+        /// </summary>
         protected FreeIntPtrDelegate freeFunc;
 
         /// <summary>
@@ -54,8 +58,6 @@ namespace InferenceEngine
         {
             if (ptr == IntPtr.Zero)
                 throw new ArgumentNullException("参数不能为空", nameof(ptr));
-            if (freeFunc == null)
-                throw new ArgumentNullException("参数不能为空", nameof(freeFunc));
 
             this.ptr = ptr;
             this.freeFunc = freeFunc;
@@ -69,22 +71,47 @@ namespace InferenceEngine
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// 释放托管状态(托管对象)
+        /// </summary>
+        protected virtual void Free()
+        {
+
+        }
+
+        /// <summary>
+        /// 释放非托管的资源，请将大型字段设置为 null
+        /// </summary>
+        protected virtual void FreeDll()
+        {
+
+        }
+
         /// <inheritdoc/>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
                     // TODO: 释放托管状态(托管对象)
+                    Free();
                 }
 
                 // TODO: 释放未托管的资源(未托管的对象)并替代终结器
                 // TODO: 将大型字段设置为 null
+                FreeDll();
 
                 if (ptr != IntPtr.Zero && freeFunc != null)
                 {
-                    freeFunc(ref ptr);
+                    //try
+                    {
+                        freeFunc(ref ptr);
+                    }
+                    //catch(Exception ex)
+                    //{
+                    //    Console.WriteLine(ex.Message);
+                    //}
                     Console.WriteLine("Dispose {0} ...", this);
                 }
 

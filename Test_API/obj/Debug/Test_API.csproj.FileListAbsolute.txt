@@ -1,5 +1,7 @@
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\Test_API.exe
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\Test_API.pdb
+E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\OpenVINO4CSharp_API.dll
+E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\OpenVINO4CSharp_API.pdb
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.csprojAssemblyReference.cache
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\MainWindow.g.cs
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\App.g.cs
@@ -11,8 +13,6 @@ E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_A
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.Properties.Resources.resources
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.csproj.GenerateResource.cache
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.csproj.CoreCompileInputs.cache
+E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.csproj.CopyComplete
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.exe
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.pdb
-E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\OpenVINO4CSharp_API.dll
-E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\bin\Debug\OpenVINO4CSharp_API.pdb
-E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\Test_API\obj\Debug\Test_API.csproj.CopyComplete

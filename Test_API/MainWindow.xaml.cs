@@ -46,12 +46,14 @@ namespace WPF_IE_API
             InitializeComponent();
         }
 
-        //Core core;
+        Core core;
+        CNNNetwork network;
         string xml = @"E:\2020\008_AI\OpenVINO&OpenCV Modules\OpenVINO_CV\x64\Release\models\face-detection-retail-0044\FP32\face-detection-retail-0044.xml";
+        //string xml = @"E:\2020\008_AI\OpenVINO&OpenCV Modules\OpenVINO_CV\x64\Release\models\face-detection-0105\FP32\face-detection-0105.xml";
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Core core = new Core();
+            core = new Core();
             CoreVersion[] vers = core.GetVersions("CPU");
             foreach(CoreVersion ver in vers) Console.WriteLine(ver);
             //core.GetAvailableDevices();
@@ -59,11 +61,81 @@ namespace WPF_IE_API
             CoreConfig config = new CoreConfig("DYN_BATCH_ENABLED", "YES");
             //config.SetNext("CPU_THREADS_NUM", "NUMA");
 
-            CNNNetwork network = core.ReadNetwork(xml);
-            string names = network.GetName();
-            Console.WriteLine("{0}", names);
-            ExecutableNetwork exec_network = core.LoadNetwork(network, "CPU", config);
+            network = core.ReadNetwork(xml);
+            Console.WriteLine("{0}", network.Name);
 
+            InputShape[] shapes = network.GetInputShapes();
+            foreach(InputShape shape in shapes) Console.WriteLine(shape);
+            //bool result = network.SetReshape(shapes);
+            //Console.WriteLine(result);
+
+            InputInfo[] inputs = network.GetInputsInfo();
+            foreach(InputInfo input in inputs) Console.WriteLine(input);
+            inputs[0].Precision = Precision.U8;
+            inputs[0].Layout = Layout.NHWC;
+            inputs[0].ResizeAlgorithm = ResizeAlgorithm.RESIZE_BILINEAR;
+
+            OutputInfo[] outputs = network.GetOutputsInfo();
+            foreach(OutputInfo output in outputs)Console.WriteLine(output);
+
+            ExecutableNetwork exec_network = core.LoadNetwork(network, "CPU", config);
+            Console.WriteLine(exec_network.GetConfig("DYN_BATCH_ENABLED"));
+
+            InferRequest request = exec_network.CreateInferRequest();
+
+
+            Bitmap bmp = new Bitmap(@"E:\2020\008_AI\OpenVINO4CSharp_API\5.jpg");
+            Console.WriteLine("Bitmap:{0} {1}", bmp.Width, bmp.Height);
+
+            BitmapData bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            
+            TensorDesc tensorDesc = new TensorDesc()
+            {
+                Layout = Layout.NHWC,
+                Dims = new Dimensions(1, 3, 499, 800),
+                Precision = Precision.U8
+            };
+            Blob blob = Blob.MakeMemoryFromPreallocated(ref tensorDesc, bmpData.Scan0, 800 * 499 * 3);
+            Console.WriteLine("{0}  {1}", bmpData.Scan0, blob.Buffer);
+            request.SetBlob(inputs[0].Name, blob);
+            request.SetCompletionCallback();
+            request.StartAsync();
+            //request.Infer();
+#if false
+            Blob outputBlob = request.GetBlob(outputs[0].Name);
+            IntPtr buffer = outputBlob.Buffer;
+
+            List<Result7> results = new List<Result7>(128);
+            for (int i = 0; i < 200; i++)
+            {
+                Result7 result = (Result7)Marshal.PtrToStructure(buffer + (i * 7 * 4), typeof(Result7));
+
+                if (result.image_id < 0) break;
+                if (result.conf >= 0.5)
+                {
+                    results.Add(result);
+                    Console.WriteLine(">{0} {1}", i, result);
+                }
+            }
+
+            bmp.UnlockBits(bmpData);
+
+            Graphics g = Graphics.FromImage(bmp);
+            for (int i = 0; i < results.Count; i++)
+            {
+                int x = (int)(results[i].x_min * bmp.Width);
+                int y = (int)(results[i].y_min * bmp.Height);
+                int w = (int)(results[i].x_max * bmp.Width) - x;
+                int h = (int)(results[i].y_max * bmp.Height) - y;
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x, y, w, h);
+
+                g.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.Red, 2), rect);
+            }
+
+            bmp.Save("test.jpg");
+            Image.Source = ChangeBitmapToImageSource(bmp);
+#endif
             //Console.WriteLine(core.SetConfig(config, "CPU"));
             //Parameter param = core.GetConfig("CPU", "DYN_BATCH_ENABLED");
             //Console.WriteLine(param);

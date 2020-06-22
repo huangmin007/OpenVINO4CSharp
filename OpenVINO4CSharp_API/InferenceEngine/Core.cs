@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-
+using static InferenceEngine.IE_C_API;
 
 namespace InferenceEngine
 {
@@ -24,7 +24,7 @@ namespace InferenceEngine
         }
 
         /// <summary>
-        /// Reads IR xml and bin files.
+        /// 读取网络模型文件(中间表示文件)
         /// </summary>
         /// <param name="modelPath">path to IR file</param>
         /// <param name="binPath">bin文件的路径，如果path为空，将尝试读取与xml相同名称的bin文件，如果未找到具有相同名称的bin文件，将不带权重地加载IR</param>
@@ -56,7 +56,7 @@ namespace InferenceEngine
         }
 
         /// <summary>
-        /// Registers extension.
+        /// 注册扩展.
         /// </summary>
         /// <param name="extensionPath"></param>
         /// <param name="deviceName"></param>
@@ -67,7 +67,7 @@ namespace InferenceEngine
         }
 
         /// <summary>
-        /// Register new device and plugin which implement this device inside Inference Engine.
+        /// 在 Inference Engine 中注册实现该设备的新设备和插件。
         /// </summary>
         /// <param name="pluginName"></param>
         /// <param name="deviceName"></param>
@@ -77,7 +77,7 @@ namespace InferenceEngine
             return IE_C_API.ie_core_register_plugin(ptr, pluginName, deviceName) == IEStatusCode.OK;
         }
         /// <summary>
-        /// Registers plugin to Inference Engine Core instance using XML configuration file with plugins description.
+        /// 使用带有插件描述的 XML 配置文件将插件注册到 Inference Engine Core 实例。
         /// </summary>
         /// <param name="xmlConfigFile"></param>
         /// <returns></returns>
@@ -86,8 +86,8 @@ namespace InferenceEngine
             return IE_C_API.ie_core_register_plugins(ptr, xmlConfigFile) == IEStatusCode.OK;
         }
         /// <summary>
-        /// Unloads previously loaded plugin with a specified name from Inference Engine The method is needed to remove plugin instance and free its resources.
-        /// If plugin for a specified device has not been created before, the method throws an exception.
+        /// 从 Inference Engine 卸载具有指定名称的先前加载的插件该方法是删除插件实例并释放其资源所必需的。
+        /// <para>如果以前没有为指定设备创建插件，则该方法将引发异常。</para>
         /// </summary>
         /// <param name="deviceName"></param>
         /// <returns></returns>
@@ -107,6 +107,7 @@ namespace InferenceEngine
             status = IE_C_API.ie_core_set_config(ptr, config, deviceName);
             return status == IEStatusCode.OK;
         }
+
         /// <summary>
         /// 获取计算设备行为的配置。
         /// 该方法旨在提取可通过 <see cref="SetConfig"/> 方法设置的信息。
@@ -144,18 +145,20 @@ namespace InferenceEngine
         /// <returns></returns>
         public CoreVersion[] GetVersions(string deviceName)
         {
-            CoreVersions ie_vers;
+            StructArray ie_vers;
             status = IE_C_API.ie_core_get_versions(ptr, deviceName, out ie_vers);
-            if (status != IEStatusCode.OK) throw new Exception("获取 IE Versions 异常");
+            //if (status != IEStatusCode.OK) throw new Exception("获取 IE Versions 异常");
 
-            CoreVersion[] vers = new CoreVersion[ie_vers.num_vers];
+            //CoreVersion[] vers = new CoreVersion[ie_vers.num_vers];
 
-            for (ulong i = 0; i < ie_vers.num_vers; i++)
-                vers[i] = (CoreVersion)Marshal.PtrToStructure(ie_vers.versions + ((int)i * Marshal.SizeOf(typeof(CoreVersion))), typeof(CoreVersion));
+            //for (ulong i = 0; i < ie_vers.num_vers; i++)
+            //    vers[i] = (CoreVersion)Marshal.PtrToStructure(ie_vers.versions + ((int)i * Marshal.SizeOf(typeof(CoreVersion))), typeof(CoreVersion));
 
+            CoreVersion[] vs = ie_vers.GetArray<CoreVersion>();
             IE_C_API.ie_core_versions_free(ref ie_vers);
 
-            return vers;
+
+            return vs;
         }
 
         /// <summary>
