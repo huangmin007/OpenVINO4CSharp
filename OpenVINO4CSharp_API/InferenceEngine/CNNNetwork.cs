@@ -4,23 +4,20 @@ using static InferenceEngine.IE_C_API;
 namespace InferenceEngine
 {
     /// <summary>
-    /// InferenceEngine CNNNetwork
+    /// Inference Engine CNN Network Object
     /// </summary>
-    public class CNNNetwork : IntPtrObject
+    public sealed class CNNNetwork : IntPtrObject
     {
         private string _Name;
 
         /// <summary>
         /// CNNNetwork
         /// </summary>
-        public CNNNetwork()
-        {
-        }
+        //public CNNNetwork(){}
 
         /// <inheritdoc/>
         internal CNNNetwork(IntPtr ptr, FreeIntPtrDelegate freeFunc) : base(ptr, freeFunc)
         {
-
         }
 
         /// <inheritdoc />
@@ -43,8 +40,6 @@ namespace InferenceEngine
                 IE_C_API.ie_network_get_name(ptr, out _Name);
                 return _Name;
             }
-
-            private set { }
         }
 
         /// <summary>
@@ -111,7 +106,7 @@ namespace InferenceEngine
 
 
     /// <summary>
-    /// CNNNetwork Input Layer Data Info 
+    /// CNN Network Input Layer Data Info 
     /// </summary>
     public sealed class InputInfo : IntPtrObject
     {
@@ -240,7 +235,7 @@ namespace InferenceEngine
     }
 
     /// <summary>
-    /// CNNNetwork Output Layer Data Info 
+    /// CNN Network Output Layer Data Info 
     /// </summary>
     public sealed class OutputInfo : IntPtrObject
     {

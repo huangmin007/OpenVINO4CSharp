@@ -19,9 +19,8 @@ namespace InferenceEngine
         /// <summary>
         /// InferRequest
         /// </summary>
-        public InferRequest()
-        {
-        }
+        //public InferRequest()
+        //{}
 
         /// <summary>
         /// 设置推断批量大小
@@ -68,10 +67,12 @@ namespace InferenceEngine
 
         /// <summary>
         /// 等待结果变为可用。阻塞直到指定的超时时间过去或结果变为可用（以先到者为准）。
+        /// <para>0 STATUS_ONLY 不会阻塞或中断当前线程，而是立即返回推断状态</para>
+        /// <para>-1 RESULT_READY 等到推理结果可用</para>
         /// </summary>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public IEStatusCode Wait(ulong timeout)
+        public IEStatusCode Wait(long timeout)
         {
             return IE_C_API.ie_infer_request_wait(ptr, timeout);
         }
@@ -86,25 +87,29 @@ namespace InferenceEngine
             return IE_C_API.ie_infer_request_infer_async(ptr) == IEStatusCode.OK;
         }
 
+        private CompleteCallback ie_callback;
+        private CallBackActionFunc callbackFunc;
+
         /// <summary>
         /// 设置异步推断完成回调函数
         /// </summary>
         /// <returns></returns>
-        public bool SetCompletionCallback()
+        public bool SetCompletionCallback(CallBackActionFunc callback)
         {
-            
-            Console.WriteLine(Marshal.SizeOf(typeof(ie_complete_call_back)));
-            ie_complete_call_back callback = new ie_complete_call_back();
-            callback.CallbackFunc = Marshal.GetFunctionPointerForDelegate((CompleteCallBackFunc)((IntPtr args) =>
+            if (callback != null)
             {
-                Console.WriteLine("test");
-            }));
-            //callback.Args = new IntPtr();
+                callbackFunc = callback;
+                ie_callback = new CompleteCallback(Marshal.GetFunctionPointerForDelegate((CallBackAction)CallbackHandler), ptr);
 
-            Console.WriteLine(IE_C_API.ie_infer_set_completion_callback(ptr, callback));
-            return true;
+                return IE_C_API.ie_infer_set_completion_callback(ptr, ref ie_callback) == IEStatusCode.OK;
+            }
+
+            return false;
         }
-
+        private void CallbackHandler(IntPtr args)
+        {
+            callbackFunc?.Invoke(new InferRequest(args, null));
+        }
 
     }
 }

@@ -189,13 +189,7 @@ namespace InferenceEngine
         public Parameter param;
     }
     
-    public delegate void CompleteCallBackFunc(IntPtr args);
 
-    public struct ie_complete_call_back
-    {
-        public IntPtr CallbackFunc;
-        public IntPtr Args;
-    }
     #endregion
 
     
@@ -207,13 +201,13 @@ namespace InferenceEngine
     {
         /// <summary>
         /// dll name
-        /// <para>路径：D:\Program Files (x86)\IntelSWTools\openvino\inference_engine\bin\intel64\Release</para>
+        /// <para>路径：X:\Program Files (x86)\IntelSWTools\openvino\inference_engine\bin\intel64\Release</para>
         /// </summary>
-//#if DEBUG
-        //public const string DLL_NAME = "inference_engine_c_apid.dll";
-//#else
+#if DEBUG
+        public const string DLL_NAME = "inference_engine_c_apid.dll";
+#else
         public const string DLL_NAME = "inference_engine_c_api.dll";
-//#endif
+#endif
 
         /// <summary>
         /// 返回 IE API 的版本号，使用 <see cref="ie_version_free"/> 释放内存。
@@ -329,10 +323,10 @@ namespace InferenceEngine
         public extern static IEStatusCode ie_infer_request_infer_async(IntPtr infer_request);
 
         [DllImport(DLL_NAME, CharSet = CharSet.Ansi, SetLastError = true)]
-        public extern static IEStatusCode ie_infer_set_completion_callback(IntPtr infer_request, ie_complete_call_back callback);
+        public extern static IEStatusCode ie_infer_set_completion_callback(IntPtr infer_request, ref CompleteCallback callback);
 
         [DllImport(DLL_NAME, CharSet = CharSet.Ansi, SetLastError = true)]
-        public extern static IEStatusCode ie_infer_request_wait(IntPtr infer_request, ulong timeout);
+        public extern static IEStatusCode ie_infer_request_wait(IntPtr infer_request, long timeout);
 
         [DllImport(DLL_NAME, CharSet = CharSet.Ansi, SetLastError = true)]
         public extern static IEStatusCode ie_infer_request_set_batch(IntPtr infer_request, ulong size);

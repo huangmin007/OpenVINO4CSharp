@@ -102,21 +102,20 @@ namespace InferenceEngine
                 // TODO: 将大型字段设置为 null
                 FreeDll();
 
-                if (ptr != IntPtr.Zero && freeFunc != null)
+                if (freeFunc != null)
                 {
-                    //try
+                    if (ptr != IntPtr.Zero)
                     {
+                        Console.WriteLine("Free {0} ... {1}", this, ptr);
                         freeFunc(ref ptr);
                     }
-                    //catch(Exception ex)
-                    //{
-                    //    Console.WriteLine(ex.Message);
-                    //}
-                    Console.WriteLine("Dispose {0} ...", this);
+
+                    Console.WriteLine("Clear {0} ... {1}", this, ptr);
+
+                    freeFunc = null;
+                    ptr = IntPtr.Zero;
                 }
 
-                freeFunc = null;
-                ptr = IntPtr.Zero;
                 disposedValue = true;
             }
         }

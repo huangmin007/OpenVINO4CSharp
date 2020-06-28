@@ -302,7 +302,8 @@ namespace InferenceEngine
         {
             string str = "[";
             for (ulong i = 0; i < Ranks; i++)
-                str += Dims[i] + (i != Ranks - 1 ? "x" : "]");
+                str += Dims[i] + (i != Ranks - 1 ? "x" : "");
+            str += "]";
             
             return str;
         }
@@ -359,6 +360,28 @@ namespace InferenceEngine
         public ulong posY;   // H upper left coordinate of roi
         public ulong sizeX;  // W size of roi
         public ulong sizeY;  // H size of roi
+    }
+
+
+
+    public delegate void CallBackActionFunc(InferRequest request);
+    public delegate void CallBackAction(IntPtr ptr);
+    internal struct CompleteCallback
+    {
+        public IntPtr Func;
+        public IntPtr Args;
+
+        public CompleteCallback(IntPtr callback, IntPtr args)
+        {
+            Args = args;
+            Func = callback;
+        }
+
+        public CompleteCallback(CallBackAction callback, IntPtr args)
+        {
+            Args = args;
+            Func = Marshal.GetFunctionPointerForDelegate(callback);
+        }
     }
 
     #endregion

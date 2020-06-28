@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using static InferenceEngine.IE_C_API;
 
 namespace InferenceEngine
 {
     /// <summary>
-    /// InferenceEngine Core
+    /// Inference Engine Core Object
     /// </summary>
-    public class Core : IntPtrObject
+    public sealed class Core : IntPtrObject
     {
         /// <summary>
         /// 使用带有插件描述的 XML 配置文件构造 Inference Engine Core 实例。  
@@ -20,7 +16,9 @@ namespace InferenceEngine
         {
             this.freeFunc = IE_C_API.ie_core_free;
             status = IE_C_API.ie_core_create(xmlConfigFile, out ptr);
-            if (status != IEStatusCode.OK) throw new Exception("创建 " + typeof(Core).FullName + " 异常");
+
+            if (status != IEStatusCode.OK) 
+                throw new Exception("创建 " + typeof(Core).FullName + " 异常 StatusCode:" + status);
         }
 
         /// <summary>
@@ -33,7 +31,8 @@ namespace InferenceEngine
         {
             IntPtr network;
             status = IE_C_API.ie_core_read_network(ptr, modelPath, binPath, out network);
-            if (status != IEStatusCode.OK) throw new Exception("创建 " + typeof(CNNNetwork).FullName + " 异常");
+            if (status != IEStatusCode.OK)
+                throw new Exception("创建 " + typeof(CNNNetwork).FullName + " 异常 StatusCode:" + status);
 
             return new CNNNetwork(network, IE_C_API.ie_network_free);
         }
@@ -50,7 +49,8 @@ namespace InferenceEngine
         {
             IntPtr exec_network;
             status = IE_C_API.ie_core_load_network(ptr, network.ptr, deviceName, config, out exec_network);
-            if (status != IEStatusCode.OK) throw new Exception("创建 " + typeof(ExecutableNetwork).FullName + " 异常");
+            if (status != IEStatusCode.OK) 
+                throw new Exception("创建 " + typeof(ExecutableNetwork).FullName + " 异常 StatusCode:" + status);
 
             return new ExecutableNetwork(exec_network, IE_C_API.ie_exec_network_free);
         }
@@ -76,6 +76,7 @@ namespace InferenceEngine
         {
             return IE_C_API.ie_core_register_plugin(ptr, pluginName, deviceName) == IEStatusCode.OK;
         }
+
         /// <summary>
         /// 使用带有插件描述的 XML 配置文件将插件注册到 Inference Engine Core 实例。
         /// </summary>
@@ -85,6 +86,7 @@ namespace InferenceEngine
         {
             return IE_C_API.ie_core_register_plugins(ptr, xmlConfigFile) == IEStatusCode.OK;
         }
+
         /// <summary>
         /// 从 Inference Engine 卸载具有指定名称的先前加载的插件该方法是删除插件实例并释放其资源所必需的。
         /// <para>如果以前没有为指定设备创建插件，则该方法将引发异常。</para>
@@ -104,8 +106,7 @@ namespace InferenceEngine
         /// <returns></returns>
         public bool SetConfig(CoreConfig config, string deviceName)
         {
-            status = IE_C_API.ie_core_set_config(ptr, config, deviceName);
-            return status == IEStatusCode.OK;
+            return IE_C_API.ie_core_set_config(ptr, config, deviceName) == IEStatusCode.OK;
         }
 
         /// <summary>
@@ -119,7 +120,8 @@ namespace InferenceEngine
         {
             Parameter param;
             status = IE_C_API.ie_core_get_config(ptr, deviceName, configName, out param);
-            if (status != IEStatusCode.OK) throw new Exception("获取 IE Config 异常");
+            if (status != IEStatusCode.OK) 
+                throw new Exception("获取 IE Config 异常 StatusCode:" + status);
 
             return param;
         }
@@ -133,7 +135,8 @@ namespace InferenceEngine
         {
             Parameter param;
             status = IE_C_API.ie_core_get_metric(ptr, deviceName, metricName, out param);
-            if (status != IEStatusCode.OK) throw new Exception("获取 IE Metric 异常");
+            if (status != IEStatusCode.OK)
+                throw new Exception("获取 IE Metric 异常 StatusCode:" + status);
 
             return param;
         }
@@ -145,20 +148,13 @@ namespace InferenceEngine
         /// <returns></returns>
         public CoreVersion[] GetVersions(string deviceName)
         {
-            StructArray ie_vers;
-            status = IE_C_API.ie_core_get_versions(ptr, deviceName, out ie_vers);
-            //if (status != IEStatusCode.OK) throw new Exception("获取 IE Versions 异常");
+            StructArray versions;
+            status = IE_C_API.ie_core_get_versions(ptr, deviceName, out versions);
 
-            //CoreVersion[] vers = new CoreVersion[ie_vers.num_vers];
+            CoreVersion[] vers = versions.GetArray<CoreVersion>();
+            IE_C_API.ie_core_versions_free(ref versions);
 
-            //for (ulong i = 0; i < ie_vers.num_vers; i++)
-            //    vers[i] = (CoreVersion)Marshal.PtrToStructure(ie_vers.versions + ((int)i * Marshal.SizeOf(typeof(CoreVersion))), typeof(CoreVersion));
-
-            CoreVersion[] vs = ie_vers.GetArray<CoreVersion>();
-            IE_C_API.ie_core_versions_free(ref ie_vers);
-
-
-            return vs;
+            return vers;
         }
 
         /// <summary>
@@ -169,7 +165,7 @@ namespace InferenceEngine
         {
             ie_available_devices avai_devices;
             status = IE_C_API.ie_core_get_available_devices(ptr, out avai_devices);
-            if (status != IEStatusCode.OK) throw new Exception("获取 IE 可用设备异常");
+            if (status != IEStatusCode.OK) throw new Exception("获取 IE 可用设备异常 StatusCode:" + status);
 
             Console.WriteLine(avai_devices.num_devices);
 

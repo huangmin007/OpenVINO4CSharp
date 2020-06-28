@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace InferenceEngine
 {
     /// <summary>
-    /// Inference Engine Blob
+    /// Inference Engine Blob Object
     /// </summary>
-    public class Blob : IntPtrObject
+    public sealed class Blob : IntPtrObject
     {
-
+        /// <inheritdoc />
         internal Blob(IntPtr ptr, FreeIntPtrDelegate freeFunc) : base(ptr, freeFunc)
         {
         }
 
+        #region Read Only Properties
         /// <summary>
         /// Bolb 元素的总数，它是所有维度的乘积。
         /// </summary>
@@ -24,9 +22,8 @@ namespace InferenceEngine
             get
             {
                 int size;
-                if (IE_C_API.ie_blob_size(ptr, out size) == IEStatusCode.OK)
-                    return size;
-                return -1;
+                IE_C_API.ie_blob_size(ptr, out size);
+                return size;
             }
         }
 
@@ -39,9 +36,8 @@ namespace InferenceEngine
             get
             {
                 int size;
-                if (IE_C_API.ie_blob_byte_size(ptr, out size) == IEStatusCode.OK)
-                    return size;
-                return -1;
+                IE_C_API.ie_blob_byte_size(ptr, out size);
+                return size;
             }
         }
 
@@ -70,6 +66,7 @@ namespace InferenceEngine
                 return layout;
             }
         }
+
         /// <summary>
         /// Blob 张量的精度
         /// </summary>
@@ -92,12 +89,11 @@ namespace InferenceEngine
             get
             {
                 IntPtr buffer;
-                if (IE_C_API.ie_blob_get_cbuffer(ptr, out buffer) != IEStatusCode.OK) 
-                    return IntPtr.Zero;
-
+                IE_C_API.ie_blob_get_cbuffer(ptr, out buffer);
                 return buffer;
             }
         }
+        #endregion
 
         /// <summary>
         /// 获取对分配的内存的访问
@@ -106,9 +102,7 @@ namespace InferenceEngine
         public IntPtr GetBuffer()
         {
             IntPtr buffer;
-            if (IE_C_API.ie_blob_get_buffer(ptr, out buffer) != IEStatusCode.OK) 
-                return IntPtr.Zero;
-
+            IE_C_API.ie_blob_get_buffer(ptr, out buffer); 
             return buffer;
         }
 
@@ -127,8 +121,8 @@ namespace InferenceEngine
         public static Blob MakeMemory(ref TensorDesc tensor)
         {
             IntPtr blob;
-            if (IE_C_API.ie_blob_make_memory(ref tensor, out blob) == IEStatusCode.OK)
-                new Exception("创建 " + typeof(Blob).FullName + " 失败");
+            if (IE_C_API.ie_blob_make_memory(ref tensor, out blob) != IEStatusCode.OK)
+                throw new Exception("创建 " + typeof(Blob).FullName + " 失败");
             
             return new Blob(blob, IE_C_API.ie_blob_free);
         }
@@ -215,6 +209,7 @@ namespace InferenceEngine
     /// <summary>
     /// Blob Buffer 
     /// </summary>
+    [Obsolete]
     public sealed class Buffer:IntPtrObject
     {
         /// <summary>

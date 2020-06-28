@@ -6,16 +6,14 @@ using System.Text;
 namespace InferenceEngine
 {
     /// <summary>
-    /// Inference Engine ExecutableNetwork
+    /// Inference Engine Executable Network Object
     /// </summary>
     public class ExecutableNetwork : IntPtrObject
     {
         /// <summary>
         /// ExecutableNetwork
         /// </summary>
-        public ExecutableNetwork()
-        {
-        }
+        //public ExecutableNetwork() {}
 
         /// <inheritdoc/>
         internal ExecutableNetwork(IntPtr ptr, FreeIntPtrDelegate freeFunc):base(ptr, freeFunc)
@@ -30,6 +28,7 @@ namespace InferenceEngine
         {
             IntPtr request;
             status = IE_C_API.ie_exec_network_create_infer_request(ptr, out request);
+
             if (status != IEStatusCode.OK)
                 throw new Exception("创建 " + typeof(InferRequest).FullName + " 异常");
 

@@ -3,4 +3,3 @@ E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\OpenVINO4CSharp_API\bin\D
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\OpenVINO4CSharp_API\obj\Debug\OpenVINO4CSharp_API.csproj.CoreCompileInputs.cache
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\OpenVINO4CSharp_API\obj\Debug\OpenVINO4CSharp_API.dll
 E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\OpenVINO4CSharp_API\obj\Debug\OpenVINO4CSharp_API.pdb
-E:\2020\008_AI\OpenVINO4CSharp_API\OpenVINO4CSharp_API\OpenVINO4CSharp_API\obj\Debug\OpenVINO4CSharp_API.csprojAssemblyReference.cache
